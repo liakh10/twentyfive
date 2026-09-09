@@ -1,0 +1,284 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<script src="config.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Twenty Five</title>
+<meta name="description" content="He went in with one point eight million and came out with twenty five dollars and sixteen cents" />
+<link rel="icon" type="image/png" href="assets/favicon.png" />
+<link rel="apple-touch-icon" href="assets/apple-icon.png" />
+<link rel="preload" as="image" href="assets/hero.webp" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet" />
+<style>
+:root{
+  --ink:#07080a; --panel:#0e1013; --paper:#ece7dd; --gold:#c9973f; --crt:#7dff9b; --red:#e2543a;
+  --dim:#767c88; --disp:"Anton",Impact,sans-serif; --mono:"JetBrains Mono",ui-monospace,monospace;
+  --pad:clamp(16px,3vw,40px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{background:var(--ink);color:var(--paper);font-family:var(--mono);font-size:13px;line-height:1.6;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+img{display:block;max-width:100%}
+a{color:inherit;text-decoration:none}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+.grain{position:fixed;inset:0;z-index:50;pointer-events:none;opacity:.06;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ---------- hud ---------- */
+.hud{position:fixed;z-index:40;display:flex;gap:6px;align-items:center}
+.tl{left:var(--pad);top:var(--pad)}
+.tr{right:var(--pad);top:var(--pad)}
+.key{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:34px;padding:0 13px;font-family:var(--mono);font-weight:700;font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--paper);background:rgba(7,8,10,.72);border:1px solid rgba(236,231,221,.55);transition:background .15s,border-color .15s,transform .12s,color .15s}
+.key:hover{border-color:var(--paper);background:rgba(236,231,221,.1);transform:translateY(-1px)}
+.key:active{transform:translateY(1px)}
+.key.buy{background:var(--gold);border-color:var(--gold);color:#150f04}
+.key.buy:hover{background:#e0ab48;border-color:#e0ab48}
+.key img{width:15px;height:15px;object-fit:contain}
+.key img.av{width:22px;height:22px;border:1px solid rgba(236,231,221,.5);border-radius:2px}
+
+/* ---------- hero ---------- */
+.hero{position:relative;min-height:100svh;display:grid;align-items:center;overflow:hidden}
+.hero .shot{position:absolute;inset:0;overflow:hidden}
+.hero .shot img{width:100%;height:100%;object-fit:cover;transform:scale(1.06);animation:push 26s ease-out forwards;filter:saturate(.85) contrast(1.05)}
+@keyframes push{to{transform:scale(1.16) translateY(-1.5%)}}
+.hero .veil{position:absolute;inset:0;background:linear-gradient(90deg,rgba(7,8,10,.94) 0%,rgba(7,8,10,.72) 44%,rgba(7,8,10,.3) 72%,rgba(7,8,10,.6) 100%)}
+.hero .foot{position:absolute;inset:auto 0 0 0;height:38%;background:linear-gradient(180deg,rgba(7,8,10,0),var(--ink))}
+.wrap{position:relative;z-index:2;width:min(1180px,100%);margin:0 auto;padding:calc(var(--pad) + 46px) var(--pad) var(--pad)}
+.eyebrow{font-size:10.5px;letter-spacing:.34em;text-transform:uppercase;color:var(--dim)}
+.eyebrow s{text-decoration:none;color:var(--red)}
+.num{font-family:var(--disp);font-size:clamp(64px,13vw,190px);line-height:.92;letter-spacing:-.01em;color:var(--gold);
+  font-variant-numeric:tabular-nums;margin:10px 0 2px;text-shadow:0 10px 40px rgba(0,0,0,.75);transition:color .5s}
+.num.done{color:var(--red)}
+.num em{font-style:normal;font-size:.42em;color:var(--dim);letter-spacing:.02em}
+h1{font-family:var(--disp);font-size:clamp(40px,8.4vw,124px);line-height:.9;letter-spacing:.005em;text-transform:uppercase;color:var(--paper)}
+h1 span{display:inline-block;opacity:0;transform:translateY(24px);animation:rise .7s cubic-bezier(.2,.8,.24,1) forwards}
+@keyframes rise{to{opacity:1;transform:none}}
+.said{margin-top:14px;max-width:46ch;font-size:13.5px;color:rgba(236,231,221,.8)}
+.said b{color:var(--paper);font-weight:700}
+.cue{position:absolute;left:50%;bottom:calc(var(--pad) - 2px);transform:translateX(-50%);z-index:3;font-size:9.5px;letter-spacing:.34em;text-transform:uppercase;color:var(--dim)}
+.cue i{display:block;font-style:normal;text-align:center;animation:nod 1.5s ease-in-out infinite}
+@keyframes nod{0%,100%{transform:translateY(0)}50%{transform:translateY(5px)}}
+
+/* ---------- the machine ---------- */
+.machine{padding:clamp(56px,9vw,120px) 0;border-top:1px solid rgba(236,231,221,.1)}
+.atm{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(280px,.85fr);gap:clamp(16px,2.6vw,34px);align-items:start}
+.screen{position:relative;background:#04140a;border:1px solid #1d3a25;box-shadow:inset 0 0 60px rgba(20,255,110,.09),0 18px 50px rgba(0,0,0,.6);padding:clamp(16px,2.6vw,30px);overflow:hidden}
+.screen:before{content:"";position:absolute;inset:0;pointer-events:none;background:repeating-linear-gradient(rgba(0,0,0,.34) 0 1px,transparent 1px 3px)}
+.screen:after{content:"";position:absolute;inset:0;pointer-events:none;background:rgba(125,255,155,.05);animation:flick 4.5s steps(1) infinite}
+@keyframes flick{0%,96%{opacity:0}97%{opacity:1}98%{opacity:0}99%{opacity:.7}}
+.screen .ln{display:flex;justify-content:space-between;gap:14px;font-size:12px;letter-spacing:.1em;color:var(--crt);text-shadow:0 0 12px rgba(125,255,155,.5);padding:5px 0;border-bottom:1px dashed rgba(125,255,155,.16)}
+.screen .ln span:first-child{color:rgba(125,255,155,.6)}
+.screen .hd{font-size:10px;letter-spacing:.34em;text-transform:uppercase;color:rgba(125,255,155,.6);margin-bottom:12px}
+.screen .ca{cursor:pointer;word-break:break-all;text-align:right}
+.screen .ca:hover{color:#c9ffd8}
+.screen .big{font-family:var(--disp);font-size:clamp(30px,5vw,58px);letter-spacing:.01em;color:var(--crt);text-shadow:0 0 22px rgba(125,255,155,.45);line-height:1}
+.screen .cur{display:inline-block;width:9px;height:15px;background:var(--crt);vertical-align:-2px;animation:blink 1.05s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+.slip{background:#f2efe6;color:#15171c;padding:clamp(14px,2vw,20px);box-shadow:0 18px 50px rgba(0,0,0,.5);
+  clip-path:polygon(0 0,100% 0,100% calc(100% - 8px),94% 100%,88% calc(100% - 8px),82% 100%,76% calc(100% - 8px),70% 100%,64% calc(100% - 8px),58% 100%,52% calc(100% - 8px),46% 100%,40% calc(100% - 8px),34% 100%,28% calc(100% - 8px),22% 100%,16% calc(100% - 8px),10% 100%,4% calc(100% - 8px),0 100%)}
+.slip h3{font-family:var(--disp);font-size:19px;letter-spacing:.05em;text-transform:uppercase;margin-bottom:10px}
+.slip p{font-size:11.5px;line-height:1.75;color:#3a3f49;border-top:1px dashed #b9b4a7;padding-top:8px;margin-top:8px}
+.slip p:first-of-type{border:0;margin:0;padding:0}
+.slip .tot{margin-top:12px;border-top:2px solid #15171c;padding-top:8px;display:flex;justify-content:space-between;font-weight:700;font-size:13px}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.acts .key{height:42px;padding:0 18px;font-size:12px}
+
+/* ---------- eight sightings ---------- */
+.seen{padding:0 0 clamp(56px,9vw,110px)}
+.head{display:flex;align-items:baseline;justify-content:space-between;gap:16px;margin-bottom:16px;flex-wrap:wrap}
+.head h2{font-family:var(--disp);font-size:clamp(26px,4.4vw,54px);letter-spacing:.02em;text-transform:uppercase}
+.head span{font-size:10px;letter-spacing:.3em;text-transform:uppercase;color:var(--dim)}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px}
+.grid button{position:relative;display:block;padding:0;overflow:hidden;background:#0b0d10;border:1px solid rgba(236,231,221,.16)}
+.grid img{width:100%;aspect-ratio:1;object-fit:cover;filter:saturate(.8) brightness(.86);transition:transform .5s cubic-bezier(.2,.8,.24,1),filter .35s}
+.grid button:hover img{transform:scale(1.07);filter:saturate(1) brightness(1)}
+.grid button b{position:absolute;left:0;right:0;bottom:0;padding:26px 10px 8px;font-size:10px;font-weight:400;letter-spacing:.06em;color:var(--paper);
+  background:linear-gradient(180deg,rgba(7,8,10,0),rgba(7,8,10,.92));opacity:0;transform:translateY(6px);transition:opacity .3s,transform .3s;text-align:left}
+.grid button:hover b{opacity:1;transform:none}
+
+.end{border-top:1px solid rgba(236,231,221,.1);padding:clamp(26px,4vw,46px) 0 calc(var(--pad) + 10px);display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;
+  font-size:10px;letter-spacing:.24em;text-transform:uppercase;color:#4d525c}
+
+/* ---------- lightbox ---------- */
+.lb{position:fixed;inset:0;z-index:60;display:none;place-items:center;padding:var(--pad);background:rgba(4,5,7,.95)}
+.lb.on{display:grid}
+.lbin{width:min(920px,100%);display:grid;gap:10px}
+.lb img{width:100%;max-height:74svh;object-fit:contain;border:1px solid rgba(236,231,221,.3)}
+.lbbar{display:flex;align-items:center;justify-content:space-between;gap:14px;font-size:11px;color:var(--dim)}
+.lbbar .cap{color:rgba(236,231,221,.85);letter-spacing:.04em}
+.lbnav{display:flex;gap:6px}
+.lbnav button{border:1px solid rgba(236,231,221,.45);width:34px;height:30px;font-family:var(--disp);font-size:16px;line-height:1;transition:background .15s}
+.lbnav button:hover{background:rgba(236,231,221,.12)}
+
+@media (max-width:900px){
+  .atm{grid-template-columns:1fr}
+  .grid{grid-template-columns:repeat(2,1fr)}
+  .grid button b{opacity:1;transform:none;font-size:9px}
+  .tl span,.tr .key.buy span{display:none}
+  .hero .veil{background:linear-gradient(180deg,rgba(7,8,10,.72),rgba(7,8,10,.5) 40%,rgba(7,8,10,.92))}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition-duration:.01ms !important}}
+</style>
+</head>
+<body>
+<div class="grain"></div>
+
+<a class="hud tl key" href="./"><img class="av" src="assets/avatar.webp" alt="" /><span data-name>Twenty Five</span></a>
+<nav class="hud tr">
+  <a class="key buy" data-link="pons" href="https://www.ponsfamily.com/launchpad"><span>Buy</span><img src="assets/pons-mark.png" alt="" /></a>
+  <a class="key" data-link="x" href="https://x.com" aria-label="X"><img src="assets/ic-x.svg" alt="X" /></a>
+</nav>
+
+<header class="hero">
+  <div class="shot"><img src="assets/hero.webp" alt="A man in a gold suit with the head of a rat, alone in an empty penthouse, holding one banknote" /></div>
+  <div class="veil"></div><div class="foot"></div>
+  <div class="wrap">
+    <div class="eyebrow">One swap &#183; four pools &#183; <s>no way back</s></div>
+    <div class="num" id="num">$1,800,000</div>
+    <h1 id="word"></h1>
+    <p class="said">Everybody posts the screenshot where twenty five dollars turns into a million.
+      <b>This is that screenshot held upside down.</b></p>
+  </div>
+  <div class="cue">Scroll<i>&#8595;</i></div>
+</header>
+
+<main class="wrap">
+  <section class="machine">
+    <div class="atm">
+      <div class="screen">
+        <div class="hd">Balance enquiry &#183; terminal 04</div>
+        <div class="ln"><span>Account</span><span data-name>Twenty Five</span></div>
+        <div class="ln"><span>Ticker</span><span data-ticker>$25</span></div>
+        <div class="ln"><span>Chain</span><span>Robinhood &#183; Pons</span></div>
+        <div class="ln"><span>Contract</span><span class="ca" id="ca" title="Copy">soon</span></div>
+        <div class="ln" style="border:0;padding-top:14px"><span>Available</span></div>
+        <div class="big">$25.16<span class="cur"></span></div>
+        <div class="acts">
+          <a class="key buy" data-link="pons" href="https://www.ponsfamily.com/launchpad">Buy on Pons<img src="assets/pons-mark.png" alt="" /></a>
+          <a class="key" data-link="dex" href="https://dexscreener.com/robinhood">Chart<img src="assets/ic-dex.svg" alt="" /></a>
+          <a class="key" data-link="x" href="https://x.com">X<img src="assets/ic-x.svg" alt="" /></a>
+        </div>
+      </div>
+      <div class="slip">
+        <h3>What the router did</h3>
+        <p>Seven point eight million tokens went in, hot, at the top of the day</p>
+        <p>Four pools deep the price found nothing on the other side and took the difference</p>
+        <p>The wallet was credited in full, correctly, instantly, with twenty five dollars and sixteen cents</p>
+        <div class="tot"><span>Received</span><span>$25.16</span></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="seen">
+    <div class="head"><h2>Eight sightings</h2><span>Same suit &#183; same note &#183; same face</span></div>
+    <div class="grid" id="grid"></div>
+  </section>
+
+  <div class="end">
+    <span data-name>Twenty Five</span>
+    <span>Robinhood Chain &#183; Pons</span>
+    <span>Not financial advice, obviously</span>
+  </div>
+</main>
+
+<div class="lb" id="lb">
+  <div class="lbin">
+    <img id="lbimg" src="" alt="" />
+    <div class="lbbar">
+      <span class="cap" id="lbcap"></span>
+      <span class="lbnav"><button id="lbprev" aria-label="Previous">&#8249;</button><span id="lbn" style="align-self:center;padding:0 8px"></span><button id="lbnext" aria-label="Next">&#8250;</button><button id="lbx" aria-label="Close">&#10005;</button></span>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  var S = window.SITE, CA = (S.CA || "SOON").trim(), HAS = CA !== "SOON" && CA !== "";
+  document.querySelectorAll('[data-name]').forEach(function(e){ e.textContent = S.NAME; });
+  document.querySelectorAll('[data-ticker]').forEach(function(e){ e.textContent = S.TICKER; });
+  document.title = S.NAME;
+  document.querySelectorAll('[data-link="pons"]').forEach(function(a){ a.href = HAS ? window.PONS_HOME + '/' + CA : window.PONS_HOME; a.target = '_blank'; a.rel = 'noopener'; });
+  document.querySelectorAll('[data-link="dex"]').forEach(function(a){ a.href = HAS ? window.DEX_HOME + '/' + CA : window.DEX_HOME; a.target = '_blank'; a.rel = 'noopener'; });
+  document.querySelectorAll('[data-link="x"]').forEach(function(a){ a.href = S.X_URL || 'https://x.com'; a.target = '_blank'; a.rel = 'noopener'; });
+  var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* the contract lives on the terminal, where a balance would be */
+  var ca = document.getElementById('ca');
+  ca.textContent = HAS ? CA : 'soon';
+  ca.addEventListener('click', function(){
+    if(!HAS){ flash('not yet'); return; }
+    if(navigator.clipboard) navigator.clipboard.writeText(CA);
+    flash('copied');
+  });
+  function flash(t){ var old = ca.textContent; ca.textContent = t; setTimeout(function(){ ca.textContent = old; }, 1200); }
+
+  /* the wordmark arrives one letter at a time */
+  var w = document.getElementById('word');
+  w.innerHTML = S.NAME.split('').map(function(c, i){
+    return '<span style="animation-delay:' + (0.5 + i * 0.045) + 's">' + (c === ' ' ? '&nbsp;' : c) + '</span>';
+  }).join('');
+
+  /* one point eight million, on its way down to twenty five */
+  var num = document.getElementById('num'), FROM = 1800000, TO = 25.16, DUR = 2600, t0 = 0;
+  function money(v){
+    return v >= 1000 ? '$' + Math.round(v).toLocaleString('en-US')
+                     : '$' + v.toFixed(2);
+  }
+  function fall(ts){
+    if(!t0) t0 = ts;
+    var p = Math.min(1, (ts - t0) / DUR), e = 1 - Math.pow(1 - p, 3.2);
+    /* fall on a log scale, so the last stretch is as brutal as the first */
+    var v = Math.exp(Math.log(FROM) + (Math.log(TO) - Math.log(FROM)) * e);
+    num.textContent = money(v);
+    if(p < 1) requestAnimationFrame(fall);
+    else { num.innerHTML = '$25.16<em> received</em>'; num.classList.add('done'); }
+  }
+  if(reduce){ num.innerHTML = '$25.16<em> received</em>'; num.classList.add('done'); }
+  else setTimeout(function(){ requestAnimationFrame(fall); }, 900);
+
+  /* eight sightings, open, no drawer */
+  var SEEN = [
+    ['Checked the balance twice, it did not improve', 'at a street ATM at night'],
+    ['Washing it does not make it more', 'watching the note in a laundromat drum'],
+    ['Deposited everything he had', 'at the night window of a closed bank'],
+    ['Table for one, budget for none', 'alone in a mall food court at 3 am'],
+    ['The watch went first', 'at a pawn shop counter'],
+    ['The car is theirs now, the note is his', 'on the hood of a towed car in an impound lot'],
+    ['Cannot afford the pump, came anyway', 'at a petrol station at night'],
+    ['Twenty five in every mirror', 'alone in a mirrored lift']
+  ];
+  var grid = document.getElementById('grid'), lb = document.getElementById('lb'),
+      lbimg = document.getElementById('lbimg'), lbcap = document.getElementById('lbcap'),
+      lbn = document.getElementById('lbn'), gi = 0;
+  grid.innerHTML = SEEN.map(function(m, i){
+    return '<button data-i="' + i + '" aria-label="' + m[0] + '">' +
+           '<img src="assets/t' + (i + 1) + '.webp" alt="A rat headed man in a gold suit ' + m[1] + '" loading="lazy" />' +
+           '<b>' + m[0] + '</b></button>';
+  }).join('');
+  function show(k){
+    gi = (k + SEEN.length) % SEEN.length;
+    lbimg.src = 'assets/m' + (gi + 1) + '.webp';
+    lbimg.alt = 'A rat headed man in a gold suit ' + SEEN[gi][1];
+    lbcap.textContent = SEEN[gi][0];
+    lbn.textContent = (gi + 1) + ' / ' + SEEN.length;
+    lb.classList.add('on');
+  }
+  grid.addEventListener('click', function(e){ var b = e.target.closest('button'); if(b) show(+b.dataset.i); });
+  document.getElementById('lbprev').addEventListener('click', function(){ show(gi - 1); });
+  document.getElementById('lbnext').addEventListener('click', function(){ show(gi + 1); });
+  document.getElementById('lbx').addEventListener('click', function(){ lb.classList.remove('on'); });
+  lb.addEventListener('click', function(e){ if(e.target === lb) lb.classList.remove('on'); });
+  document.addEventListener('keydown', function(e){
+    if(!lb.classList.contains('on')) return;
+    if(e.key === 'Escape') lb.classList.remove('on');
+    if(e.key === 'ArrowLeft') show(gi - 1);
+    if(e.key === 'ArrowRight') show(gi + 1);
+  });
+})();
+</script>
+</body>
+</html>
