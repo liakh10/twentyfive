@@ -134,7 +134,7 @@ h1 span{display:inline-block;opacity:0;transform:translateY(24px);animation:rise
 </nav>
 
 <header class="hero">
-  <div class="shot"><img src="assets/hero.webp" alt="A man in a gold suit with the head of a rat, alone in an empty penthouse, holding one banknote" /></div>
+  <div class="shot"><img src="assets/hero.webp" alt="Wojak in a gold suit, alone in an empty penthouse, holding one banknote" /></div>
   <div class="veil"></div><div class="foot"></div>
   <div class="wrap">
     <div class="eyebrow">One swap &#183; four pools &#183; <s>no way back</s></div>
@@ -256,13 +256,13 @@ h1 span{display:inline-block;opacity:0;transform:translateY(24px);animation:rise
       lbn = document.getElementById('lbn'), gi = 0;
   grid.innerHTML = SEEN.map(function(m, i){
     return '<button data-i="' + i + '" aria-label="' + m[0] + '">' +
-           '<img src="assets/t' + (i + 1) + '.webp" alt="A rat headed man in a gold suit ' + m[1] + '" loading="lazy" />' +
+           '<img src="assets/t' + (i + 1) + '.webp" alt="Wojak in a gold suit ' + m[1] + '" loading="lazy" />' +
            '<b>' + m[0] + '</b></button>';
   }).join('');
   function show(k){
     gi = (k + SEEN.length) % SEEN.length;
     lbimg.src = 'assets/m' + (gi + 1) + '.webp';
-    lbimg.alt = 'A rat headed man in a gold suit ' + SEEN[gi][1];
+    lbimg.alt = 'Wojak in a gold suit ' + SEEN[gi][1];
     lbcap.textContent = SEEN[gi][0];
     lbn.textContent = (gi + 1) + ' / ' + SEEN.length;
     lb.classList.add('on');
